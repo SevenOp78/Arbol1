@@ -40,6 +40,7 @@ tiempo real (WebSocket) con una interfaz minimalista de 3 estados (blanco/negro/
 - Diagnostic Sheet con historial de imágenes y JSON extraído.
 - Reset manual desde panel; reset automático al detectar nuevo questionNumber.
 - Validación: question_complete sólo si abre con "¿"/palabra interrogativa Y termina con "?".
+- **Modo demo (2026-06-07)**: botón discreto en la esquina superior derecha para subir imagen desde la UI (file picker), con indicador de progreso "SUBIENDO IMAGEN…" y manejo de errores. Reutiliza `POST /api/upload`.
 
 ## Robustness validated
 - Imágenes duplicadas (mismo frag o misma opción) → no duplican estado.

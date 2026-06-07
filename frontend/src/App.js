@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import "@/App.css";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Terminal, RotateCcw } from "lucide-react";
+import { Terminal, RotateCcw, Upload, Loader2 } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -207,6 +207,43 @@ export default function App() {
     } catch (_e) { /* noop */ }
   }, []);
 
+  const fileInputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+
+  const onPickImage = useCallback(() => {
+    setUploadError(null);
+    fileInputRef.current?.click();
+  }, []);
+
+  const onFileChange = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // reset so the same file can be re-selected
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setUploadError("El archivo debe ser una imagen.");
+      return;
+    }
+    setUploading(true);
+    setUploadError(null);
+    try {
+      const fd = new FormData();
+      fd.append("image", file, file.name || "upload.jpg");
+      fd.append("device_id", "web-demo");
+      fd.append("timestamp", new Date().toISOString());
+      const resp = await fetch(`${API}/upload`, { method: "POST", body: fd });
+      if (!resp.ok) {
+        const txt = await resp.text().catch(() => "");
+        setUploadError(`Error ${resp.status}: ${txt.slice(0, 120)}`);
+      }
+      // estado se actualiza vía WebSocket
+    } catch (err) {
+      setUploadError(`Error de red: ${String(err).slice(0, 120)}`);
+    } finally {
+      setUploading(false);
+    }
+  }, []);
+
   const containerBg = useMemo(() => {
     if (status === "success") return "bg-[#050505] text-white";
     if (status === "error") return "bg-[#002EB8] text-white";
@@ -227,6 +264,28 @@ export default function App() {
       {/* corner controls */}
       <div className="absolute top-6 right-6 flex items-center gap-4 z-50">
         <WebSocketDot status={wsStatus} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={onFileChange}
+          data-testid="demo-file-input"
+        />
+        <button
+          onClick={onPickImage}
+          disabled={uploading}
+          data-testid="demo-upload-button"
+          aria-label="Subir imagen (modo demo)"
+          title="Subir imagen (modo demo)"
+          className={classNames(
+            "p-2 rounded-none transition-opacity",
+            uploading ? "opacity-60" : "",
+            dotInvert ? "text-white/40 hover:text-white" : "text-neutral-500 hover:text-neutral-900",
+          )}
+        >
+          {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+        </button>
         <Sheet>
           <SheetTrigger asChild>
             <button
@@ -338,6 +397,20 @@ export default function App() {
           >
             Reiniciar
           </button>
+        </div>
+      ) : null}
+
+      {/* upload status pill (bottom-left) */}
+      {uploading || uploadError ? (
+        <div
+          data-testid="upload-status-pill"
+          className={classNames(
+            "absolute bottom-6 left-6 z-50 px-3 py-2 text-[10px] uppercase tracking-[0.3em] border font-mono",
+            dotInvert ? "border-white/30 text-white/80 bg-black/40" : "border-neutral-300 text-neutral-700 bg-white",
+            uploadError ? "border-rose-500 text-rose-500" : "",
+          )}
+        >
+          {uploading ? "Subiendo imagen…" : uploadError}
         </div>
       ) : null}
     </div>
