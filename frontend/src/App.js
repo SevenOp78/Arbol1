@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import "@/App.css";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Terminal, RotateCcw } from "lucide-react";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -48,6 +48,9 @@ function DiagnosticPanel({ state, logs, onReset }) {
     <div className="flex flex-col h-full font-mono text-xs" data-testid="diagnostic-sheet-content">
       <SheetHeader className="px-1 pb-3 border-b border-neutral-800/40">
         <SheetTitle className="font-mono uppercase tracking-widest text-sm">Diagnóstico</SheetTitle>
+        <SheetDescription className="font-mono text-xs text-neutral-500">
+          Estado actual del sistema y registro de imágenes recibidas.
+        </SheetDescription>
       </SheetHeader>
 
       <section className="py-4 border-b border-neutral-800/40 space-y-1">
