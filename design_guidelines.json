@@ -1,0 +1,99 @@
+{
+  "theme_archetype": {
+    "id": "4",
+    "name": "Swiss & High-Contrast (Brutalism / Utility)",
+    "justification": "The problem statement explicitly demands extreme simplicity, strict centered elements, and literal full-screen solid colors (White, Black, Blue) corresponding to states. Archetype 4 fits perfectly. The design removes all decorative elements and relies entirely on massive typography and stark color contrast to deliver instant status updates."
+  },
+  "typography": {
+    "fonts": [
+      {
+        "family": "Cabinet Grotesk, sans-serif",
+        "weight": "font-black",
+        "usage": "Reserved EXCLUSIVELY for the giant answer letter (A, B, C, D, E). Used at extreme viewport scales (e.g., text-[40vw]) to create dramatic impact.",
+        "source": "Fontshare or custom webfont"
+      },
+      {
+        "family": "IBM Plex Mono, monospace",
+        "weight": "font-medium & font-regular",
+        "usage": "Question numbers, state labels, error descriptions, WebSocket status, and diagnostic logs. Adds a raw, technical 'terminal' feel.",
+        "source": "Google Fonts"
+      }
+    ],
+    "anti_pattern_avoidance": "Banned: Inter, Roboto, standard sans. The main answer letter MUST be an expressive display font to prevent the app from looking like a default HTML page."
+  },
+  "color_palette": {
+    "states": {
+      "waiting": {
+        "background": "#FFFFFF",
+        "text_primary": "#A3A3A3",
+        "text_secondary": "#E5E5E5"
+      },
+      "success": {
+        "background": "#050505",
+        "text_primary": "#FFFFFF",
+        "text_secondary": "#737373"
+      },
+      "error": {
+        "background": "#002EB8",
+        "text_primary": "#FFFFFF",
+        "text_secondary": "#99B2FF"
+      }
+    },
+    "rules": "SOLID COLORS ONLY. Zero gradients. Zero glassmorphism on the main view. No purples or teals."
+  },
+  "layout_system": {
+    "main_view": "h-screen w-screen overflow-hidden flex flex-col items-center justify-center relative transition-colors duration-150 ease-in-out",
+    "giant_typography": "absolute inset-0 flex items-center justify-center pointer-events-none tracking-tighter leading-none",
+    "corner_controls": "absolute top-6 right-6 flex items-center gap-4 z-50",
+    "diagnostic_panel": "w-full max-w-md border-l-2 border-border/10 p-6 flex flex-col h-full bg-background"
+  },
+  "ui_states": {
+    "WAITING": {
+      "visuals": "Background: #FFFFFF. Centered mono text: 'Esperando opciones...'. Color: neutral-400. Scale: text-xl or text-2xl."
+    },
+    "SUCCESS": {
+      "visuals": "Background: #050505. Top-center mono text: 'PREGUNTA 15' (white). Absolute-center giant text: 'B' (Cabinet Grotesk, font-black, text-[40vw], white). No other distractions."
+    },
+    "ERROR": {
+      "visuals": "Background: #002EB8 (International Klein Blue). Top-center mono text: 'ERROR' (white). Center mono text: Description of error, max-w-3xl, text-2xl, leading-relaxed."
+    }
+  },
+  "components": {
+    "diagnostic_toggle": {
+      "type": "icon_button",
+      "icon": "List or Terminal from @phosphor-icons/react",
+      "styling": "Discrete, opacity-30 hover:opacity-100 transition-opacity. Color adapts to current background state (black on white bg, white on black/blue bg)."
+    },
+    "websocket_indicator": {
+      "type": "status_dot",
+      "styling": "w-2.5 h-2.5 rounded-full. Green-500 for connected, Red-500 for disconnected, Amber-500 for connecting."
+    },
+    "diagnostic_sheet": {
+      "type": "shadcn_sheet",
+      "styling": "Used for the side panel. Must slide in from the right. Content inside must be strictly monospace, showing raw incoming image payloads, HTTP POST logs, and WebSocket connection history. Dark mode styling by default for the panel to feel like a terminal."
+    }
+  },
+  "motion": {
+    "state_transitions": "Extremely fast crossfades (150ms). The user needs instant feedback, not cinematic delays. It should feel like a mechanical train departure board snapping to the next state."
+  },
+  "testing_attributes": [
+    "data-testid='main-display-view'",
+    "data-testid='status-waiting'",
+    "data-testid='status-success'",
+    "data-testid='status-error'",
+    "data-testid='giant-answer-letter'",
+    "data-testid='question-number'",
+    "data-testid='error-description'",
+    "data-testid='diagnostic-toggle-button'",
+    "data-testid='websocket-status-indicator'",
+    "data-testid='diagnostic-sheet-content'"
+  ],
+  "instructions_to_main_agent": [
+    "1. Build a single-page React app (using .js files) and Tailwind CSS.",
+    "2. Implement a global state or context for the 3 main statuses (WAITING, SUCCESS, ERROR) which dictates the background color and text color of the <body> or main wrapper.",
+    "3. Use dynamic Viewport units (vw/vh) for the SUCCESS answer letter so it takes up maximum screen real estate.",
+    "4. Import Cabinet Grotesk (or similar heavy display font) for the answer letter, and IBM Plex Mono for all other text.",
+    "5. Integrate Shadcn Sheet for the diagnostic sub-view. Keep the trigger button extremely minimal in the top right corner alongside a tiny WebSocket status dot.",
+    "6. Ensure all critical UI elements have their corresponding data-testid attributes attached."
+  ]
+}
